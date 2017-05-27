@@ -13,7 +13,7 @@ self="$(basename "$BASH_SOURCE")"
 
 versions=( */ )
 versions=( "${versions[@]%/}" )
-url='https://github.com/nodejs/docker-node'
+url='https://github.com/ianberinger/docker-node-intl'
 
 # sort version numbers with highest first
 IFS=$'\n'; versions=( $(echo "${versions[*]}" | sort -r) ); unset IFS
@@ -39,13 +39,13 @@ join() {
 for version in "${versions[@]}"; do
 	# Skip "docs" and other non-docker directories
 	[ -f "$version/Dockerfile" ] || continue
-	
+
 	eval stub=$(echo "$version" | awk -F. '{ print "$array_" $1 "_" $2 }');
 	commit="$(fileCommit "$version")"
 	fullVersion="$(grep -m1 'ENV NODE_VERSION ' "$version/Dockerfile" | cut -d' ' -f3)"
 
 	versionAliases=( $fullVersion $version ${stub} )
-	
+
 	echo "Tags: $(join ', ' "${versionAliases[@]}")"
 	echo "GitCommit: ${commit}"
 	echo "Directory: ${version}"
@@ -55,9 +55,9 @@ for version in "${versions[@]}"; do
 	for variant in $variants; do
 		# Skip non-docker directories
 		[ -f "$version/$variant/Dockerfile" ] || continue
-		
+
 		commit="$(fileCommit "$version/$variant")"
-		
+
 		slash='/'
 		variantAliases=( "${versionAliases[@]/%/-${variant//$slash/-}}" )
 		variantAliases=( "${variantAliases[@]//latest-/}" )
