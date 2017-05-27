@@ -38,7 +38,7 @@ RUN addgroup -g 1000 node \
     && grep " node-v$NODE_VERSION.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
     && tar -xf "node-v$NODE_VERSION.tar.xz" \
     && cd "node-v$NODE_VERSION" \
-    && ./configure \
+    && ./configure --with-intl=full-icu --download=all \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
     && apk del .build-deps \
@@ -46,7 +46,7 @@ RUN addgroup -g 1000 node \
     && rm -Rf "node-v$NODE_VERSION" \
     && rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
 
-ENV YARN_VERSION 0.24.4
+ENV YARN_VERSION 0.24.6
 
 RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && for key in \
